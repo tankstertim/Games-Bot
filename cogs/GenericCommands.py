@@ -10,18 +10,44 @@ class GenericCommands(commands.Cog):
     self.client = client
   
   @app_commands.command(name="help")
-  async def help(self,interaction):
-    await interaction.channel.send(interaction.guild)
-    help_embed = discord.Embed(
-      title="Help"
-    )
-    help_embed.add_field(name = 'Commands', value = '\n', inline = False)
-    help_embed.add_field(name = '/play', value = 'You can pick a game to play and the player you want to play against. If you want to play against the bot, use the bots name in the player argument.', inline = False)
-    help_embed.add_field(name = '/quit', value = 'This command quits the game. if you are in the middle of the game you will loose elo.')
-    help_embed.add_field(name = '/stats', value = 'This command shows your stats or can show other peoples stats. ', inline = False)
-    help_embed.add_field(name = "Games to play", value = 'TicTacToe\nHangman\nConnect4', inline = False)
-    help_embed.description =  '[Invite Bot](https://discord.com/api/oauth2/authorize?client_id=1074546275980152892&permissions=534723950656&scope=bot)'
-    await interaction.response.send_message(embed=help_embed)
+  @app_commands.describe(help_type = "Command Type")
+  @app_commands.choices(help_type=[
+    discord.app_commands.Choice(name="Normal MultiPlayer Commands", value = 1),
+    discord.app_commands.Choice(name = "Server Duel Commands", value = 2),
+    discord.app_commands.Choice(name = "Other Commands", value = 3)
+  ])
+  async def help(self,interaction, help_type: discord.app_commands.Choice[int]):
+    if help_type.value == 1:
+      help_embed = discord.Embed(title="Help")
+      help_embed.add_field(name="----------------Normal MultiPlayer Commands----------------",value="",inline = False)
+      help_embed.add_field(name = '/play', value = 'You can pick a game to play and the player you want to play against. If you want to play against the bot, use the bots name in the player argument.', inline = False)
+      help_embed.add_field(name = '/quit', value = 'This command quits the game. if you are in the middle of the game you will loose elo.')
+      help_embed.add_field(name = '/stats', value = 'This command shows your stats or can show other peoples stats. ', inline = False)
+      help_embed.add_field(name = "Games to play", value = 'TicTacToe\nHangman\nConnect4', inline = False)
+      help_embed.description =  '[Invite Bot](https://discord.com/api/oauth2/authorize?client_id=1074546275980152892&permissions=534723950656&scope=bot)'
+      await interaction.response.send_message(embed=help_embed)
+    elif help_type.value == 2:
+      server_help_embed = discord.Embed(title="Help")
+      server_help_embed.add_field(name = "----------------Server Duel Commands----------------",value="", inline = False)
+      server_help_embed.add_field(name="/setchannel", value="sets your game channel so you can play with other servers. Only server admins or whitelisted roles can use this.",inline = False)
+      server_help_embed.add_field(name="/serverduel", value="sends an invite to another server to play a game. Only server admins or whitelisted roles can play", inline = False)
+      server_help_embed.add_field(name="/voteforfeit", value="starts a vote to forfeit vote. ", inline = False)
+      server_help_embed.add_field(name="/serverstats", value="shows the servers stats.", inline =False)
+      server_help_embed.add_field(name = "Games to play", value = 'TicTacToe\nHangman\nConnect4', inline = False)
+      server_help_embed.description =  '[Invite Bot](https://discord.com/api/oauth2/authorize?client_id=1074546275980152892&permissions=534723950656&scope=bot)'
+      await interaction.response.send_message(embed=server_help_embed)
+    elif help_type.value == 3:
+      other_help_embed = discord.Embed(title="Help")
+      other_help_embed.add_field(name="----------------Other Commands----------------", value="",inline=False)
+      other_help_embed.add_field(name="/leaderboard", value="shows the leaderboard of the top players globaly or localy in your server.",inline = False)
+      other_help_embed.add_field(name="/addadminrole", value = "Allows you to whitelist a role. Only server admins or whitelisted roles can use this command.", inline =False)
+      other_help_embed.add_field(name="/removeadminrole", value="Allows you to remove a role from the whitelist. Only servr admins or white listed roles can use this command.", inline=False)
+      other_help_embed.add_field(name = "Games to play", value = 'TicTacToe\nHangman\nConnect4', inline = False)
+      other_help_embed.description =  '[Invite Bot](https://discord.com/api/oauth2/authorize?client_id=1074546275980152892&permissions=534723950656&scope=bot)'
+      await interaction.response.send_message(embed=other_help_embed)
+
+  
+    
 
   
   @app_commands.command(name="play", description = "play a game")
