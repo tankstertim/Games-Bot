@@ -74,7 +74,7 @@ class MultiServerCommands(commands.Cog):
     description="set the channel where server duel invites go")
   async def set_channel(self, interaction, channel: discord.TextChannel):
     if not interaction.user.top_role.permissions.administrator and  not interaction.user.guild_permissions.administrator:
-      await interaction.followup.send("You are not a administrator of this server.")
+      await interaction.response.send_message("You are not a administrator of this server.")
       return
     with open('server_info.json', 'r') as f:
       servers = json.load(f)
