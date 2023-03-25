@@ -1,0 +1,178 @@
+import discord
+from discord.ext import commands
+from discord import app_commands
+from game_files.game  import Game
+from buttons.InviteButtons import InviteButtons
+from other_files.enums import GameTypes, GameNames
+import json
+class GenericCommands(commands.Cog):
+  def __init__(self,client: commands.Bot):
+    self.client = client
+  
+  @app_commands.command(name="help")
+  async def help(self,interaction):
+    await interaction.channel.send(interaction.guild)
+    help_embed = discord.Embed(
+      title="Help"
+    )
+    help_embed.add_field(name = 'Commands', value = '\n', inline = False)
+    help_embed.add_field(name = '/play', value = 'You can pick a game to play and the player you want to play against. If you want to play against the bot, use the bots name in the player argument.', inline = False)
+    help_embed.add_field(name = '/quit', value = 'This command quits the game. if you are in the middle of the game you will loose elo.')
+    help_embed.add_field(name = '/stats', value = 'This command shows your stats or can show other peoples stats. ', inline = False)
+    help_embed.add_field(name = "Games to play", value = 'TicTacToe\nHangman\nConnect4', inline = False)
+    help_embed.description =  '[Invite Bot](https://discord.com/api/oauth2/authorize?client_id=1074546275980152892&permissions=534723950656&scope=bot)'
+    await interaction.response.send_message(embed=help_embed)
+
+  
+  @app_commands.command(name="play", description = "play a game")
+  @app_commands.describe(game = "Games to play")
+  @app_commands.choices(game = [
+    discord.app_commands.Choice(name="Tic Tac Toe", value = 1),
+    discord.app_commands.Choice(name="Hangman", value = 2),
+    discord.app_commands.Choice(name = 'Connect4', value = 3)
+  ])
+  async def play(self,interaction, game: discord.app_commands.Choice[int], player: discord.Member):
+    game_type = game.value
+    guild_id = interaction.guild.id
+    user = interaction.user
+    channel = self.client.get_channel(interaction.channel.id)
+    key = await self.client.get_key( user, guild_id)
+    choice = game
+    with open('server_info.json') as f:
+      servers = json.load(f)
+    if str(guild_id) in servers:
+      if servers[str(guild_id)]['game_channel'] == str(interaction.channel.id):
+        await interaction.response.send_message('You can not play in this channel', ephemeral = True)
+        return
+      
+    if user == player:
+      await interaction.response.send_message('You cant play yourself.', ephemeral = True)
+      return
+    if key != None:
+      key_game = self.client.games[key]
+      if guild_id == key_game.guild:
+        await interaction.response.send_message(
+          f'{user.mention}, your arleady in a game.')
+        return
+    if player == self.client.user:
+      user_scores = await self.client.get_score(user)
+      player_scores = await self.client.get_score(player)
+      user_score = int(user_scores['tictactoe']['elo'])
+      player_score = int(player_scores['tictactoe']['elo'])
+      p1_prob = await  self.client.get_elo_prob(user_score,player_score)
+      p2_prob = 1 - p1_prob
+      self.client.games[(user, player, guild_id)] = Game(user, player, interaction.guild, True,game_type,channel,p1_prob,p2_prob)
+      game = self.client.games[(user, player, guild_id)]
+      with open("scores.json" , 'r') as f:
+        users = json.load(f)
+      if game_type == 1:
+          users[str(game.p1.id)]['tictactoe']['games'] += 1
+          users[str(game.p2.id)]['tictactoe']['games'] += 1
+      elif game_type == 2:
+          users[str(game.p1.id)]['hangman']['games'] += 1
+          users[str(game.p2.id)]['hangman']['games'] += 1
+      elif game_type == 3:
+          users[str(game.p1.id)]['connect4']['games'] += 1
+          users[str(game.p2.id)]['connect4']['games'] += 1
+      with open("scores.json" , "w") as f:
+        json.dump(users,f,indent = 2)
+      game = self.client.games[(user, player, guild_id)]
+      user = interaction.user
+      game.invite_accepted = True
+      await interaction.response.send_message(f'Created a {choice.name} game for {user.mention} and {game.p2.mention}')
+      await interaction.channel.send(embed = game.game.start_embed)
+      draw_message = game.draw()
+      if draw_message != None:
+        board_message = await interaction.channel.send(draw_message)
+        game.message = board_message
+      return
+    else:
+      key =  await self.client.get_key( player, guild_id)
+      if key != None:
+        await interaction.response.send_message(
+          "The player you want to play with is arleady in a game.",ephemeral = True)
+        return
+      user_scores = await self.client.get_score(user)
+      player_scores = await self.client.get_score(player)
+      if game_type == 1:
+        user_score = int(user_scores['tictactoe']['elo'])
+        player_score = int(player_scores['tictactoe']['elo'])
+      elif game_type == 2:
+        user_score = int(user_scores['hangman']['elo'])
+        player_score = int(player_scores['hangman']['elo'])
+      elif game_type == 3:
+        user_score = int(user_scores['connect4']['elo'])
+        player_score = int(player_scores['connect4']['elo'])
+      p1_prob = await self.client.get_elo_prob(user_score,player_score)
+      p2_prob = 1 - p1_prob
+      self.client.games[(user, player, guild_id)] = Game(user, player, interaction.guild, False, game_type,channel, p1_prob,p2_prob) 
+     
+    game = self.client.games[(user, player, guild_id)]
+    invite_embed = discord.Embed(title = f'{user.name} has sent an invite to {player.name}')
+    invite_embed.add_field(name = 'Game', value = choice.name)
+    invite_embed.add_field(name = 'Accept Invite', value = 'You have 30 seconds to accept the invite.')
+    invite_menu = InviteButtons(game,choice, self.client)
+    await interaction.response.send_message(embed = invite_embed,view=invite_menu)
+
+  
+  @app_commands.command(name='quit')
+  async def quit(self,interaction):
+    user = interaction.user
+    key = await self.client.get_key(user, interaction.guild.id)
+    if key not in self.client.games.keys():
+      await interaction.response.send_message(
+        'your not in a game.', ephemeral =True)
+      return
+    game = self.client.games[key]
+    if game.game_choice == GameTypes.hm.value:
+      game.winner  = 'tie'
+    elif user == game.p2:
+      game.winner = game.p1
+    else: 
+      game.winner = game.p2
+
+    winner_embed  = await self.client.check_game_over(game,'scores.json')
+    if winner_embed != None:
+      await interaction.response.send_message(f'Game ended, {user.name} quit.', embed = winner_embed)
+    
+
+  @app_commands.command(name = 'stats')
+  async def stats(self,interaction, player: discord.Member = None):
+    if player == None:
+      user = interaction.user
+    else:
+      user = player
+    pfp = user.display_avatar
+    score= await self.client.get_score(user)
+    stats_embed = discord.Embed(title= "Stats")
+    stats_embed.set_author(name = f"{user.name}")
+    stats_embed.set_thumbnail(url=f"{pfp}")
+    stats_embed.add_field(name = 'Tic Tac Toe', value=f"""
+      elo: {score['tictactoe']['elo']}
+      wins: {score['tictactoe']['wins']}
+      losses: {score['tictactoe']['losses']}
+      draws: {score['tictactoe']['draws']}
+      games played: {score['tictactoe']['games']}\n
+      """, inline = True)
+    stats_embed.add_field(name = 'Hangman', value=f"""
+      elo: {score['hangman']['elo']}
+      wins: {score['hangman']['wins']}
+      losses: {score['hangman']['losses']}
+      draws: {score['hangman']['draws']}
+      games played: {score['hangman']['games']}\n
+      """,inline = True)
+    stats_embed.add_field(name = 'Connect 4', value=f"""
+      elo: {score['connect4']['elo']}
+      wins: {score['connect4']['wins']}
+      losses: {score['connect4']['losses']}
+      draws: {score['hangman']['draws']}
+      games played: {score['connect4']['games']}\n
+      """, inline = True)
+    await interaction.response.send_message(embed=stats_embed)
+    
+
+
+
+    
+async def setup(client:commands.Bot)-> None:
+  await client.add_cog(GenericCommands(client))
