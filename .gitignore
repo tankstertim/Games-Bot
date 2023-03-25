@@ -3,3 +3,4 @@ important_files/
 *.json
 *.pyc
 
+**/__pycache__/
