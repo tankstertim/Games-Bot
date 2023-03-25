@@ -1,4 +1,5 @@
 important_files/
 *.env
 *.json
-**/__pycache__/
+*.pyc
+
