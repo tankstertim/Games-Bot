@@ -84,6 +84,12 @@ class TicTacToeCommands(commands.Cog):
     winner_embed= await self.client.check_game_over(game,'scores.json')
     if winner_embed != None:
       await ctx.send(embed = winner_embed)
+  @place.error
+  async def place_handler(self,ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+      if error.param.name == "pos":
+        await ctx.send("you forgot to type in a position. The command format should be !place your position here.")
+  
 async def setup(client:commands.Bot)-> None:
   await client.add_cog(TicTacToeCommands(client))
 

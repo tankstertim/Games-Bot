@@ -77,6 +77,12 @@ class Connect4Commands(commands.Cog):
     winner_embed  = await self.client.check_game_over(game,'scores.json')
     if winner_embed != None:
       await ctx.send(embed = winner_embed)
+  @col.error
+  async def guess_handler(self,ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+      if error.param.name == "pos":
+        await ctx.send("you forgot to type in a colum. The command format should be !col your colum here.")
+  
     
 async def setup(client:commands.Bot)-> None:
   await client.add_cog(Connect4Commands(client))

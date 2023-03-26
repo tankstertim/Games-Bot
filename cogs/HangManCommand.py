@@ -190,8 +190,18 @@ class HangManCommands(commands.Cog):
     winner_embed = await self.client.check_game_over(game,'scores.json')
     if winner_embed != None:
       await ctx.send(embed = winner_embed)
-
   
+  @word.error
+  async def word_handler(self,ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+      if error.param.name == 'word':
+        await ctx.send("You forgot to type in a word. The command format should be !word your word here.")
+  
+  @guess.error
+  async def guess_handler(self,ctx,error):
+    if isinstance(error,commands.MissingRequiredArgument):
+      if error.param.name == "letter":
+        await ctx.send("you forgot to type in a letter. The command format should be !guess your letter here.")
   
 async def setup(client:commands.Bot)-> None:
   await client.add_cog(HangManCommands(client))
