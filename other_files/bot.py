@@ -222,8 +222,9 @@ class Bot(commands.Bot):
       server_game.current_messages= {}
       if server_game.game.word == None:
         return await self.multi_move(server_game)
-      await server_game.current_channel.send(file=discord.File(f'hangman{server_game.game.guesses}.png'))
-      await server_game.target_channel.send(file=discord.File(f'hangman{server_game.game.guesses}.png'))
+      curr_dir = os.getcwd()
+      await server_game.current_channel.send(file = discord.File(os.path.join(curr_dir,f'assets/hangman{server_game.game.guesses}.png')))
+      await server_game.target_channel.send(file = discord.File(os.path.join(curr_dir,f'assets/hangman{server_game.game.guesses}.png')))
       await server_game.current_channel.send(embed=server_game.draw())
       await server_game.target_channel.send(embed=server_game.draw())
       return await self.multi_move(server_game)
