@@ -5,7 +5,7 @@ import json
 
 class VoteInviteButtons(discord.ui.View):
   def __init__(self, client,game_type,game):
-    super().__init__(timeout=90)
+    super().__init__(timeout=30)
     self.value  = None
     self.game_type = game_type
     self.game = game
