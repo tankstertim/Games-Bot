@@ -29,19 +29,19 @@ class MultiServerCommands(commands.Cog):
     user_role = user.top_role
     guild = interaction.guild
     if not str(user_role.id) in servers[str(guild.id)]["whitelisted_roles"] and not user.guild_permissions.administrator:
-      await interaction.response.send_message('You are not an admin of this server.')
+      await interaction.response.send_message('You are not an admin of this server.', ephemeral=True)
       return
     if str(role.id) in servers[str(guild.id)]["whitelisted_roles"]:
-      await interaction.response.send_message('This role is arleady whitelisted')
+      await interaction.response.send_message('This role is arleady whitelisted', ephemeral=True)
       return
     everyone_role = discord.utils.get(guild.roles,name="@everyone")
     if role == everyone_role:
-      await interaction.response.send_message(f"You can not whitelist {role.name}")
+      await interaction.response.send_message(f"You can not whitelist {role.name}", ephemeral=True)
       return
     servers[str(guild.id)]["whitelisted_roles"].append(str(role.id))
     with open("server_info.json", "w") as f:
       servers = json.dump(servers,f,indent=2)
-    await interaction.response.send_message(f"{role.mention} has successfully been whitelisted")
+    await interaction.response.send_message(f"{role.mention} has successfully been whitelisted",ephemeral=True)
   
   @app_commands.command(name='removeadminrole')
   async def remove_role(self, interaction,role: discord.Role):
@@ -49,38 +49,41 @@ class MultiServerCommands(commands.Cog):
       servers = json.load(f)
     
     if not str(interaction.guild.id) in servers:
-      await interaction.response.send_message("Your server does not have a games channel setup. User /setchannel")
+      await interaction.response.send_message("Your server does not have a games channel setup. User /setchannel", ephemeral=True)
       return
     
     user = interaction.user
     user_role = user.top_role
     guild = interaction.guild
     if not str(user_role.id) in servers[str(guild.id)]['whitelisted_roles'] and not user.guild_permissions.administrator:
-      await interaction.response.send_message('You are not an adminstrator of this server.')
+      await interaction.response.send_message('You are not an adminstrator of this server.', ephemeral = True)
       return
     
     if not str(role.id) in servers[str(guild.id)]['whitelisted_roles']:
-      await interaction.response.send_message(f"{role.name} is not whitelisted.")
+      await interaction.response.send_message(f"{role.name} is not whitelisted.",ephemeral=True)
       return
     
     servers[str(guild.id)]['whitelisted_roles'].remove(str(role.id))
     with open("server_info.json", "w") as f:
       servers = json.dump(servers,f,indent=2)
     
-    await interaction.response.send_message(f"{role.name} was successfully removed from the whitelist")
+    await interaction.response.send_message(f"{role.name} was successfully removed from the whitelist",ephemeral=True)
 
   @app_commands.command(
     name="setchannel",
     description="set the channel where server duel invites go")
   async def set_channel(self, interaction, channel: discord.TextChannel):
-    if not interaction.user.top_role.permissions.administrator and  not interaction.user.guild_permissions.administrator:
-      await interaction.response.send_message("You are not a administrator of this server.")
-      return
     with open('server_info.json', 'r') as f:
       servers = json.load(f)
+    user = interaction.user
+    top_role = user.top_role
     if str(interaction.guild.id) in servers.keys():
+      if not str(top_role.id) in servers[str(interaction.guild.id)]['whitelisted_roles'] and not user.guild_permissions.administrator:
+        await interaction.response.send_message('You are not an administrator of this server', ephemeral = True)
       servers[str(interaction.guild.id)]["game_channel"] = str(channel.id)
     else:
+      if not top_role.permissions.administrator and not user.guild_permissions.administrator:
+        await interaction.response.send_message("You are not an administrator of this server", ephemeral = True)
       game_dict = {}
       game_dict["game_channel"] = str(channel.id)
       for k in GameTypes:
@@ -154,11 +157,16 @@ class MultiServerCommands(commands.Cog):
                         game_type: discord.app_commands.Choice[int],
                         server_name: str):
     await interaction.response.defer()
-    if not interaction.user.top_role.permissions.administrator and  not interaction.user.guild_permissions.administrator:
-      await interaction.followup.send("You are not a administrator of this server.")
-      return
     with open("server_info.json", "r") as f:
       servers = json.load(f)
+    if not str(interaction.guild.id) in servers.keys():
+      await interaction.followup.send(
+        'Your server does not have an game channel set up.')
+      return
+    user = interaction.user
+    top_role = user.top_role
+    if not str(top_role.id) in servers[str(interaction.guild.id)]['whitelisted_roles'] and not user.guild_permissions.administrator:
+      await interaction.followup.send('You are not an administrator of this server', ephemeral = True)
     guilds = [self.client.get_guild(int(guild)) for guild in servers.keys()]
     lst_guilds = []
     lst_ids = []
@@ -194,10 +202,7 @@ class MultiServerCommands(commands.Cog):
       interaction.followup.send('command timed out.')
       return
 
-    if not str(interaction.guild.id) in servers.keys():
-      await interaction.followup.send(
-        'Your server does not have an game channel set up.')
-      return
+
 
     guilds = [guild for guild in self.client.guilds]
     server = self.client.get_guild(int(game_msg.content))
