@@ -130,6 +130,7 @@ class Bot(commands.Bot):
           lose_embed.set_image(url="https://media.tenor.com/dF7OjuYn1s0AAAAC/text-animated-text.gif")
           winner_embed.set_image(url ="https://media.tenor.com/pJatGz_liCsAAAAC/congrats-congratulations.gif")
         else:
+          winner_embed.set_image(url ="https://media.tenor.com/pJatGz_liCsAAAAC/congrats-congratulations.gif")
           winner_embed.set_thumbnail(url = f"{player1_avatar}")
         users[str(player1.id)][game_choice]['wins'] += 1
         users[str(player2.id)][game_choice]['losses'] += 1
@@ -139,13 +140,15 @@ class Bot(commands.Bot):
           lose_embed.set_image(url="https://media.tenor.com/dF7OjuYn1s0AAAAC/text-animated-text.gif")
           winner_embed.set_image(url ="https://media.tenor.com/pJatGz_liCsAAAAC/congrats-congratulations.gif")
         else:
-          
+          winner_embed.set_image(url ="https://media.tenor.com/pJatGz_liCsAAAAC/congrats-congratulations.gif")
           winner_embed.set_thumbnail(url = f"{player2_avatar}")
         users[str(player1.id)][game_choice]['losses'] += 1
         users[str(player2.id)][game_choice]['wins'] += 1
       elif a_score == 0.5 and b_score == 0.5:
         if player1_avatar == None:
           lose_embed.set_image(url="https://media.tenor.com/AvtX2y2luhcAAAAC/almost-there.gif")
+          winner_embed.set_image(url ="https://media.tenor.com/AvtX2y2luhcAAAAC/almost-there.gif")
+        else:
           winner_embed.set_image(url ="https://media.tenor.com/AvtX2y2luhcAAAAC/almost-there.gif")
         users[str(player1.id)][game_choice]['draws'] += 1
         users[str(player2.id)][game_choice]['draws'] += 1
