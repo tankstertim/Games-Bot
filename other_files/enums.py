@@ -6,6 +6,7 @@ class GameTypes(Enum):
   hm = 'hangman'
   ttt = 'tictactoe'
   c4 = 'connect4'
+  chess = 'chess'
 
 class GameMode(Enum):
   vote = 1

@@ -3,6 +3,7 @@ from .TicTacToe import TicTacToe
 from .HangMan import HangMan
 from .connect4 import Connect4
 from other_files.enums import GameTypes
+from chess_files.game import *
 class Game:
   def __init__(self, p1, p2, guild, computer,game_type,channel,p1_prob= None,p2_prob = None):
     self.p1 = p1
@@ -25,11 +26,13 @@ class Game:
     if game_type == 3:
       self.game = Connect4(p1,p2)
       self.game_choice = GameTypes.c4.value
+    if game_type == 4:
+      self.game = Chess()
+      self.game_choice = GameTypes.chess.value
     self.invite_accepted = False
     
     
 
   def draw(self):
     board_message = self.game.draw()
-    self.winner= self.game.winner
     return board_message

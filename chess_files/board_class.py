@@ -2,6 +2,8 @@ import discord
 from .chess_constants import *
 from .pieces import *
 from other_files.enums import *
+from PIL import Image, ImageDraw
+from io import BytesIO
 class Board:
     def __init__(self):
         self.board = [[0 for j in range(8)] for i in range(8)]
@@ -34,27 +36,33 @@ class Board:
         return 
     
     def draw(self):
-        chess_board = ''
-        for i in range(1,9):
-            for j in range(1,9):
-                if (i%2 == 1 and j%2 == 1) or (i%2 == 0 and j%2 == 0):
-                    square_color = 1
-                else:
-                    square_color = 0
-                if self.board[i-1][j-1] == 0:
-                    if square_color == 0:
-                        chess_board += LIGHT_SQUARE
-                    else:
-                        chess_board += DARK_SQUARE
+        chess_board = Image.new("RGBA",(WIDTH,HEIGHT), DARK_SQUARE)
+        draw_board = ImageDraw.Draw(chess_board)
+
+        #draws the board
+        for row in range(ROWS):
+            for col in range(row%2,ROWS,2):
+                square_coords =  (row*SQUARE_SIZE,col*SQUARE_SIZE,(row+1)*SQUARE_SIZE,(col+1)*SQUARE_SIZE)
+                draw_board.rectangle(square_coords, fill = LIGHT_SQUARE)
+
+        #draws the pieces
+        for i in range(len(self.board)):
+            for piece in self.board[i]:
+                if piece == 0:
                     continue
-                piece = self.get_piece(i-1,j-1)
-                if square_color == 0:
-                    chess_board += piece.light_image
-                else:
-                    chess_board += piece.dark_image
-        chess_embed = discord.Embed(title='Chess')
-        chess_embed.add_field(f'Turn {self.turn}')
-        return
+                piece_pos = (piece.col*SQUARE_SIZE,piece.row*SQUARE_SIZE,(piece.col+1)*SQUARE_SIZE,(piece.row+1)*SQUARE_SIZE)
+                piece_image = Image.open(piece.image)
+                piece_resize = piece_image.resize((SQUARE_SIZE,SQUARE_SIZE))
+                chess_board.paste(piece_resize,piece_pos,piece_resize.convert('RGBA'))
+        
+        bytes_image = BytesIO()
+        chess_board.save(bytes_image,format="PNG")
+        bytes_image.seek(0)
+        chess_board_file = discord.File(bytes_image,filename="chess_board.png")
+       
+        return chess_board_file
+
+
     
     def move_piece(self, piece, row, col):
 
@@ -135,10 +143,6 @@ class Board:
     def get_piece(self,row,col):
         return self.board[row][col]
 
-    def draw_pieces(self,win):
-        return 
-    def draw_promotion_pieces(self,win):
-        return
     def remove(self, piece):
         self.board[piece.row][piece.col] = 0
 

@@ -1,11 +1,14 @@
 from .chess_constants import *
 from .board_class import *
+import discord
 
-class Game:
-    def __init__(self,win):
-        self._init(False)
-        self.win = win
+class Chess:
+    def __init__(self):
+        self._init()
     
+    def draw(self):
+        board_message = self.board.draw()
+        return board_message
     def update(self):
         self.possible_moves = 0
         self.player_check = False
@@ -18,7 +21,7 @@ class Game:
         self.valid_moves = []
         self.attacked_squares= []
         self.board.get_all_valid_moves(0)
-        
+        self.start_embed = discord.Embed(title="Test")
     
     def reset(self):
         self._init()

@@ -63,11 +63,9 @@ class Pawn(Piece):
         self.take_pos = {}
         self.type = PieceTypes.Pawn
         if self.color == 0:
-            self.dark_image = LIGHT_PAWN_DARK_SQUARE
-            self.light_image = LIGHT_PAWN_LIGHT_SQUARE
+            self.image = WHITE_PAWN_IMAGE
         else:
-            self.dark_image = DARK_PAWN_DARK_SQUARE
-            self.light_image = DARK_PAWN_LIGHT_SQUARE
+            self.image = BLACK_PAWN_IMAGE
 
     
     def check_in_passing(self,board):
@@ -104,12 +102,9 @@ class Knight(Piece):
         self.price = 300
         self.type = PieceTypes.Knight
         if self.color == 0:
-            self.dark_image = LIGHT_KNIGHT_DARK_SQUARE
-            self.light_image = LIGHT_KNIGHT_LIGHT_SQUARE
+            self.image = WHITE_KNIGHT_IMAGE
         else:
-            self.dark_image = DARK_KNIGHT_DARK_SQUARE
-            self.light_image = DARK_KNIGHT_LIGHT_SQUARE
-
+            self.image = BLACK_KNIGHT_IMAGE
 
 
 class Bishop(Piece):
@@ -118,11 +113,10 @@ class Bishop(Piece):
         self.price = 300
         self.type = PieceTypes.Bishop
         if self.color == 0:
-            self.dark_image = LIGHT_BISHOP_DARK_SQUARE
-            self.light_image = LIGHT_BISHOP_LIGHT_SQUARE
+            self.image = WHITE_BISHOP_IMAGE
         else:
-            self.dark_image = DARK_BISHOP_DARK_SQUARE
-            self.light_image = DARK_BISHOP_LIGHT_SQUARE
+            self.image = BLACK_BISHOP_IMAGE
+        
 
 
 class Queen(Piece):
@@ -131,11 +125,10 @@ class Queen(Piece):
         self.price = 900
         self.type = PieceTypes.Queen
         if self.color == 0:
-            self.dark_image = LIGHT_QUEEN_DARK_SQUARE
-            self.light_image = LIGHT_QUEEN_LIGHT_SQUARE
+            self.image = WHITE_QUEEN_IMAGE
         else:
-            self.dark_image = DARK_QUEEN_DARK_SQUARE
-            self.light_image = DARK_QUEEN_LIGHT_SQUARE
+            self.image = BLACK_QUEEN_IMAGE
+        
 
 class King(Piece):
     def __init__(self, row,col,color):
@@ -149,11 +142,9 @@ class King(Piece):
         self.castled = False
         self.castled_pos = None
         if self.color == 0:
-            self.dark_image = LIGHT_KING_DARK_SQUARE
-            self.light_image = LIGHT_KING_LIGHT_SQUARE
+            self.image = WHITE_KING_IMAGE
         else:
-            self.dark_image = DARK_KING_DARK_SQUARE
-            self.light_image = DARK_KING_LIGHT_SQUARE
+            self.image = BLACK_KING_IMAGE
         
         
 class Rook(Piece):
@@ -164,8 +155,6 @@ class Rook(Piece):
         self.check = False
         self.first_move = True
         if self.color == 0:
-            self.dark_image = LIGHT_ROOK_DARK_SQUARE
-            self.light_image = LIGHT_ROOK_LIGHT_SQUARE
+            self.image = WHITE_PAWN_IMAGE
         else:
-            self.dark_image = DARK_ROOK_DARK_SQUARE
-            self.light_image = DARK_ROOK_LIGHT_SQUARE
+            self.image = BLACK_PAWN_IMAGE

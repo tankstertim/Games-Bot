@@ -55,7 +55,8 @@ class GenericCommands(commands.Cog):
   @app_commands.choices(game = [
     discord.app_commands.Choice(name="Tic Tac Toe", value = 1),
     discord.app_commands.Choice(name="Hangman", value = 2),
-    discord.app_commands.Choice(name = 'Connect4', value = 3)
+    discord.app_commands.Choice(name = 'Connect4', value = 3),
+    discord.app_commands.Choice(name = 'Chess', value = 4)
   ])
   async def play(self,interaction, game: discord.app_commands.Choice[int], player: discord.Member):
     game_type = game.value
@@ -108,6 +109,9 @@ class GenericCommands(commands.Cog):
       await interaction.response.send_message(f'Created a {choice.name} game for {user.mention} and {game.p2.mention}')
       await interaction.channel.send(embed = game.game.start_embed)
       draw_message = game.draw()
+      if game_type == 4:
+        await interaction.channel.send(file=draw_message)
+        return
       if draw_message != None:
         board_message = await interaction.channel.send(draw_message)
         game.message = board_message
