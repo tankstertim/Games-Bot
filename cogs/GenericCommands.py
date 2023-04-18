@@ -133,6 +133,9 @@ class GenericCommands(commands.Cog):
       elif game_type == 3:
         user_score = int(user_scores['connect4']['elo'])
         player_score = int(player_scores['connect4']['elo'])
+      elif game_type == 4: 
+        user_score = int(user_scores['chess']['elo'])
+        player_score = int(player_scores['chess']['elo'])
       p1_prob = await self.client.get_elo_prob(user_score,player_score)
       p2_prob = 1 - p1_prob
       self.client.games[(user, player, guild_id)] = Game(user, player, interaction.guild, False, game_type,channel, p1_prob,p2_prob) 
@@ -177,27 +180,16 @@ class GenericCommands(commands.Cog):
     stats_embed = discord.Embed(title= "Stats")
     stats_embed.set_author(name = f"{user.name}")
     stats_embed.set_thumbnail(url=f"{pfp}")
-    stats_embed.add_field(name = 'Tic Tac Toe', value=f"""
-      elo: {score['tictactoe']['elo']}
-      wins: {score['tictactoe']['wins']}
-      losses: {score['tictactoe']['losses']}
-      draws: {score['tictactoe']['draws']}
-      games played: {score['tictactoe']['games']}\n
-      """, inline = True)
-    stats_embed.add_field(name = 'Hangman', value=f"""
-      elo: {score['hangman']['elo']}
-      wins: {score['hangman']['wins']}
-      losses: {score['hangman']['losses']}
-      draws: {score['hangman']['draws']}
-      games played: {score['hangman']['games']}\n
-      """,inline = True)
-    stats_embed.add_field(name = 'Connect 4', value=f"""
-      elo: {score['connect4']['elo']}
-      wins: {score['connect4']['wins']}
-      losses: {score['connect4']['losses']}
-      draws: {score['hangman']['draws']}
-      games played: {score['connect4']['games']}\n
-      """, inline = True)
+    for k in GameTypes:
+      stats_embed.add_field(name = k.value, value=f"""
+        elo: {score[k.value]['elo']}
+        wins: {score[k.value]['wins']}
+        losses: {score[k.value]['losses']}
+        draws: {score[k.value]['draws']}
+        games played: {score[k.value]['games']}\n
+        """, inline = True)
+   
+    
     await interaction.response.send_message(embed=stats_embed)
     
 

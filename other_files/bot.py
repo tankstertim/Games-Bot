@@ -16,7 +16,7 @@ class Bot(commands.Bot):
 
   def __init__(self):
     super().__init__(command_prefix="!",intents=discord.Intents.all())
-    self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands"]
+    self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands", "cogs.chess_commands"]
     self.games = {}
     self.server_games = {}
 
@@ -52,19 +52,24 @@ class Bot(commands.Bot):
     with open('scores.json', 'r') as f:
       users = json.load(f)
 
-    if str(user.id) in users.keys():
-      return users[str(user.id)]
-    else:
-      game_dict = {}
-      for k in GameTypes:
-        game_dict[k.value] = {
-          'wins': 0,
-          'losses': 0,
-          'games': 0,
-          'draws': 0,
-          'elo': 1000
-          }
-      users[str(user.id)] = game_dict
+    game_dict = {}
+    if str(user.id) in users:
+      game_dict = users[str(user.id)]
+    for k in GameTypes:
+      if k.value in game_dict:
+        print(k.value)
+        continue
+      game_dict[k.value] = {
+        'wins': 0,
+        'losses': 0,
+        'games': 0,
+        'draws': 0,
+        'elo': 1000
+        }
+    if str(user.id) in users:
+      if game_dict == users[str(user.id)]:
+        return users[str(user.id)]
+    users[str(user.id)] = game_dict
     with open('scores.json','w') as f:
       json.dump(users,f,indent=2)
     return users[str(user.id)]

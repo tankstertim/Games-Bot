@@ -141,12 +141,15 @@ class Board:
         elif piece_type == PieceTypes.Rook:
              self.board[pawn.row][pawn.col] = Rook(pawn.row,pawn.col,pawn.color)
     def get_piece(self,row,col):
+        print('here')
+        print(self.board[row][col])
         return self.board[row][col]
 
     def remove(self, piece):
         self.board[piece.row][piece.col] = 0
 
     def get_valid_moves(self,piece, attacked):
+        print('Inside valid moves function.')
         valid_moves = []
         legal_moves = []
         side_y = self._get_side(piece.row,piece)

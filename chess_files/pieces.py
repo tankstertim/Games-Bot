@@ -155,6 +155,6 @@ class Rook(Piece):
         self.check = False
         self.first_move = True
         if self.color == 0:
-            self.image = WHITE_PAWN_IMAGE
+            self.image = WHITE_ROOK_IMAGE
         else:
-            self.image = BLACK_PAWN_IMAGE
+            self.image = BLACK_ROOK_IMAGE

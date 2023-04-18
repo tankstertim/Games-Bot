@@ -27,7 +27,7 @@ class Game:
       self.game = Connect4(p1,p2)
       self.game_choice = GameTypes.c4.value
     if game_type == 4:
-      self.game = Chess()
+      self.game = Chess(p1,p2)
       self.game_choice = GameTypes.chess.value
     self.invite_accepted = False
     
@@ -35,4 +35,5 @@ class Game:
 
   def draw(self):
     board_message = self.game.draw()
+    self.winner= self.game.winner
     return board_message

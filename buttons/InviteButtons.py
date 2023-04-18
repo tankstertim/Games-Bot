@@ -43,11 +43,14 @@ class InviteButtons(discord.ui.View):
         await interaction.channel.send(f'{self.game.p1.mention}, please use !word in private dms')
         await self.game.p1.send(f'{self.game.p1.mention}, please use !word (your word) here')
       draw_message = self.game.draw()
+      self.value = False
+      self.used = True
+      if self.game.game_type == 4:
+        await interaction.channel.send(file=draw_message)
+        return
       if draw_message != None:
         board_message = await interaction.channel.send(draw_message)
         self.game.message = board_message
-      self.value = False
-      self.used = True
 
 
   @discord.ui.button(label = "Ignore Invite", style = discord.ButtonStyle.danger)
