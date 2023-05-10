@@ -30,6 +30,7 @@ class LeaderBoardDropdown(discord.ui.Select):
 
   
   async def callback(self,interaction: discord.Interaction):
+    await interaction.response.defer()
     if self.values[0] == "1":
       users = []
       for member in interaction.guild.members:
@@ -52,7 +53,7 @@ class LeaderBoardDropdown(discord.ui.Select):
     self.disabled = True
     view = View()
     view.add_item(self)
-    await interaction.response.edit_message(view=view)
+    await self.message.edit(view=view)
     await leaderboard_view.send(interaction.channel)
 class DropdownView(discord.ui.View):
   def __init__(self,client,users_dict,game_type,leaderboard_type):

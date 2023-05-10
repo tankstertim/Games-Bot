@@ -79,9 +79,10 @@ class TicTacToeCommands(commands.Cog):
     if not move:
       await ctx.reply('Not a valild move. Please enter a number 1-9 that is empty',ephemeral = True)
       return
-      game.message = None
+
     await ctx.send(game.draw())
     winner_embed= await self.client.check_game_over(game,'scores.json')
+    print(winner_embed)
     if winner_embed != None:
       await ctx.send(embed = winner_embed)
   @place.error
