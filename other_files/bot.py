@@ -16,7 +16,7 @@ class Bot(commands.Bot):
 
   def __init__(self):
     super().__init__(command_prefix="!",intents=discord.Intents.all())
-    self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands", "cogs.chess_commands"]
+    self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands"]
     self.games = {}
     self.server_games = {}
 

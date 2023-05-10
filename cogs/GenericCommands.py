@@ -134,12 +134,8 @@ class GenericCommands(commands.Cog):
       self.client.games[(user, player, guild_id)] = Game(user, player, interaction.guild, False, game_type,channel, p1_prob,p2_prob) 
      
     game = self.client.games[(user, player, guild_id)]
-    invite_embed = discord.Embed(title = f'{user.name} has sent an invite to {player.name}')
-    invite_embed.add_field(name = 'Game', value = choice.name)
-    invite_embed.add_field(name = 'Accept Invite', value = 'You have 30 seconds to accept the invite.')
-    invite_menu = InviteButtons(game,choice, self.client)
-    await interaction.response.send_message(embed = invite_embed,view=invite_menu)
-
+    invite_menu = InviteButtons(game,choice, self.client,game.p1,game.p2,interaction.guild)
+    await invite_menu.send_invite(interaction)
   
   @app_commands.command(name='quit')
   async def quit(self,interaction):
