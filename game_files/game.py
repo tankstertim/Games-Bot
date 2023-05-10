@@ -35,5 +35,4 @@ class Game:
 
   def draw(self):
     board_message = self.game.draw()
-    self.winner = self.game.winner
     return board_message
