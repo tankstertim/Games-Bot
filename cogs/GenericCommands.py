@@ -56,7 +56,6 @@ class GenericCommands(commands.Cog):
     discord.app_commands.Choice(name="Tic Tac Toe", value = 1),
     discord.app_commands.Choice(name="Hangman", value = 2),
     discord.app_commands.Choice(name = 'Connect4', value = 3),
-    discord.app_commands.Choice(name = 'Chess', value = 4)
   ])
   async def play(self,interaction, game: discord.app_commands.Choice[int], player: discord.Member):
     game_type = game.value
@@ -95,12 +94,9 @@ class GenericCommands(commands.Cog):
       if game_type == 1:
           users[str(game.p1.id)]['tictactoe']['games'] += 1
           users[str(game.p2.id)]['tictactoe']['games'] += 1
-      elif game_type == 2:
-          users[str(game.p1.id)]['hangman']['games'] += 1
-          users[str(game.p2.id)]['hangman']['games'] += 1
-      elif game_type == 3:
-          users[str(game.p1.id)]['connect4']['games'] += 1
-          users[str(game.p2.id)]['connect4']['games'] += 1
+      else:
+        await interaction.response.send_message(f'The bot cannot play {choice.name}.')
+        return
       with open("scores.json" , "w") as f:
         json.dump(users,f,indent = 2)
       game = self.client.games[(user, player, guild_id)]
@@ -133,9 +129,6 @@ class GenericCommands(commands.Cog):
       elif game_type == 3:
         user_score = int(user_scores['connect4']['elo'])
         player_score = int(player_scores['connect4']['elo'])
-      elif game_type == 4: 
-        user_score = int(user_scores['chess']['elo'])
-        player_score = int(player_scores['chess']['elo'])
       p1_prob = await self.client.get_elo_prob(user_score,player_score)
       p2_prob = 1 - p1_prob
       self.client.games[(user, player, guild_id)] = Game(user, player, interaction.guild, False, game_type,channel, p1_prob,p2_prob) 
