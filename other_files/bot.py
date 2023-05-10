@@ -89,6 +89,7 @@ class Bot(commands.Bot):
 
   async def check_game_over(self,game,file_name):
     game_choice = game.game_choice
+    print(f'winner: {game.winner}')
     if game.winner != None:
       with open(file_name, 'r') as f:
         users = json.load(f)
