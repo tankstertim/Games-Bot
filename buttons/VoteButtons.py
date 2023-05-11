@@ -89,14 +89,22 @@ class VoteInviteButtons(discord.ui.View):
           return
       else:
         turn_embed = discord.Embed(title = 'Turn')
-        turn_embed.add_field(name='Server Id', value = f'{self.game.game.turn.id}')
-        turn_embed.add_field(name = 'Server Name', value = f'{self.game.game.turn.name}')
+        if self.game.game_choice == GameTypes.chess.value:
+          turn_embed.add_field(name='Server Id', value = f'{self.game.game.player_turn.id}')
+          turn_embed.add_field(name = 'Server Name', value = f'{self.game.game.player_turn.name}')
+        else:
+          turn_embed.add_field(name='Server Id', value = f'{self.game.game.turn.id}')
+          turn_embed.add_field(name = 'Server Name', value = f'{self.game.game.turn.name}')
         await self.game.target_channel.send(embed = self.game.game.start_embed)
         await self.game.current_channel.send(embed =  self.game.game.start_embed)
         await self.game.target_channel.send(embed = turn_embed)
         await self.game.current_channel.send(embed =  turn_embed)
-        await self.game.current_channel.send(board)
-        await self.game.target_channel.send(board)
+        if  self.game.game_choice == GameTypes.chess.value:
+          await self.game.current_channel.send(file=board)
+          await self.game.target_channel.send(file=board)
+        else:
+          await self.game.current_channel.send(board)
+          await self.game.target_channel.send(board)
       if self.game.mode == 2:
         return
       await self.client.multi_move(self.game)

@@ -16,7 +16,7 @@ class Bot(commands.Bot):
 
   def __init__(self):
     super().__init__(command_prefix="!",intents=discord.Intents.all())
-    self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands"]
+    self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands","cogs.chess_commands"]
     self.games = {}
     self.server_games = {}
 
@@ -73,13 +73,31 @@ class Bot(commands.Bot):
     with open('scores.json','w') as f:
       json.dump(users,f,indent=2)
     return users[str(user.id)]
+
   async def get_server_score(self,server):
-      with open('server_info.json', 'r') as f:
-        servers = json.load(f)
-  
-      if str(server.id) in servers.keys():
-        return servers[str(server.id)]
-      return None
+    with open('server_info.json', 'r') as f:
+      servers = json.load(f)
+    game_dict = {}
+    if str(server.id) in servers:
+      servers_len = len(servers[str(server.id)])
+    for k in GameTypes:
+      if k.value in servers[str(server.id)]:
+        print(k.value)
+        continue
+      servers[str(server.id)][k.value] = {
+        'wins': 0,
+        'losses': 0,
+        'games': 0,
+        'draws': 0,
+        'elo': 1000
+        }
+    if servers_len == len(servers[str(server.id)]):
+      print('exiting function')
+      return servers[str(server.id)]
+    with open('server_info.json','w') as f:
+      json.dump(servers,f,indent=2)
+    return servers[str(server.id)]
+
 
 
 
@@ -248,6 +266,10 @@ class Bot(commands.Bot):
       turn_embed.add_field(name = 'Server Name', value = f'{server_game.game.turn.name}')
       await server_game.target_channel.send(embed = turn_embed)
       await server_game.current_channel.send(embed =  turn_embed)
+    if server_game.game_choice == GameTypes.chess.value:
+      await server_game.target_channel.send(file=server_game.draw())
+      await server_game.current_channel.send(file=server_game.draw())
+      return await self.multi_move(server_game)
     await server_game.target_channel.send(server_game.draw())
     await server_game.current_channel.send(server_game.draw())
     return await self.multi_move(server_game)

@@ -109,7 +109,8 @@ class MultiServerCommands(commands.Cog):
   @app_commands.choices(game_type=[
     discord.app_commands.Choice(name="Tic Tac Toe", value=GameTypes.ttt.value),
     discord.app_commands.Choice(name="Hangman", value=GameTypes.hm.value),
-    discord.app_commands.Choice(name="Connnect 4", value=GameTypes.c4.value)
+    discord.app_commands.Choice(name="Connnect 4", value=GameTypes.c4.value),
+    discord.app_commands.Choice(name="Chess", value=GameTypes.chess.value)
   ])
   async def leaderboard(self, interaction,
                         leaderboard_type: discord.app_commands.Choice[int],
@@ -145,7 +146,8 @@ class MultiServerCommands(commands.Cog):
   @app_commands.choices(game=[
     discord.app_commands.Choice(name="Tic Tac Toe", value=1),
     discord.app_commands.Choice(name="Hangman", value=2),
-    discord.app_commands.Choice(name='Connect4', value=3)
+    discord.app_commands.Choice(name='Connect4', value=3),
+    discord.app_commands.Choice(name="Chess", value=4)
   ])
   @app_commands.describe(game_type="Mode")
   @app_commands.choices(game_type=[

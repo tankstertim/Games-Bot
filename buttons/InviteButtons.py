@@ -40,7 +40,7 @@ class InviteButtons(discord.ui.View):
           users[str(self.player.id)]['connect4']['games'] += 1
       with open("scores.json" , "w") as f:
         json.dump(users,f,indent = 2)
-      await self.disable_view()
+      self.disable_view()
       await self.message.edit(view=self)
       await interaction.channel.send(embed = self.game.game.start_embed)
       if self.game.game_choice == GameTypes.hm.value:

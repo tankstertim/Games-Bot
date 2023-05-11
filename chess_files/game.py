@@ -15,10 +15,11 @@ class Chess:
         self.computer_check = False
         #self.board.check_if_promotion(self.turn)
     def _init(self,p1,p2):
-        self.col_dict = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5, "F": 6, "G": 7, "H":8}
+        self.col_dict = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H":7}
         self.selected = None 
         self.board = Board()
         self.turn = 0
+        self.player_turn = p1
         self.p1 = p1
         self.p2 = p2
         self.winner = None
@@ -69,14 +70,19 @@ class Chess:
         #self.attacked_squares = self.board.get_attacked_pieces(self.turn)
         self.board.check_if_promotion(self.turn)
         self.board.update_pawn_pass()
-        self.winner = self.board.checkmate
+
         self.selected = None
         if not self.board.player_promotion:
             if self.turn == 0:
                 self.board.check_if_check(1)
                 self.turn = 1
+                self.player_turn = self.p2
                 self.computer_check = self.board.check
             else:
                 self.board.check_if_check(0)
                 self.turn = 0
+                self.player_turn = self.p1
                 self.player_check = self.board.check
+        self.board.get_all_valid_moves(self.turn)
+        if self.board.checkmate:
+            self.winner = self.board.checkmate

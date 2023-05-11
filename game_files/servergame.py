@@ -2,6 +2,7 @@ from other_files.constants import X, O, EMPTY_SQUARE
 from .TicTacToe import TicTacToe
 from .HangMan import HangMan
 from .connect4 import Connect4
+from chess_files.game import Chess
 from other_files.enums import GameTypes
 
 class ServerGame():
@@ -26,7 +27,9 @@ class ServerGame():
     elif game_type == 3:
       self.game =Connect4(self.guild1,self.guild2)
       self.game_choice = GameTypes.c4.value
-
+    elif game_type == 4:
+      self.game =Chess(self.guild1,self.guild2)
+      self.game_choice = GameTypes.chess.value
   def draw(self):
     if self.game_choice != GameTypes.hm.value:
       self.turn = self.game.turn
