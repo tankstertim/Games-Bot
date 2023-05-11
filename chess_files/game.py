@@ -31,31 +31,23 @@ class Chess:
         self._init()
     def move(self,pos):
         move = pos.upper()
-        print('moving')
-        print(move)
         if len(move) != 4:
-            print('Failed')
             return False
-        print(move)
         if (ord(move[0]) < 65 or ord(move[0]) > 72) or (ord(move[2]) < 65 or ord(move[2]) > 72):
-            print('Failed')
             return False
-        print(move)
         if (int(move[1]) < 1 or int(move[1]) > 8) or (int(move[3]) < 1 or int(move[3]) > 8):
-            print('Failed')
             return False
-        print('done with first checks')
-        curr_row = move[1]
+        curr_row = 8+int(move[1])*-1
         curr_col =int(self.col_dict[move[0]])
-        target_row = move[3]
+        target_row = 8+int(move[3])*-1
         target_col = int(self.col_dict[move[2]])
-        print('getting moves')
-        print(f'({curr_row}, {curr_col})\n({target_row},{target_col})')
-        print(self.board)
         curr_piece = self.board.get_piece(curr_row,curr_col)
+        if curr_piece ==0:
+          return False
         target_piece = self.board.get_piece(target_row,target_col)
         valid_moves = self.board.get_valid_moves(curr_piece,False)
-        print('got valid moves')
+        print(curr_row,curr_col)
+        print(target_row,target_col)
         if not (target_row,target_col) in valid_moves:
             return False
         if target_piece != 0:
@@ -68,7 +60,6 @@ class Chess:
         self.change_turn()
         print('done')
         return True
-
 
     
     def change_turn(self):
