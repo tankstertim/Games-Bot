@@ -276,7 +276,12 @@ class Bot(commands.Bot):
   
   async def server_update(self,game):
     turn_embed = discord.Embed(title='Turn')
-    if game.game_choice != GameTypes.hm.value:
+    if game.game_choice == GameTypes.chess.value:
+      turn_embed.add_field(name='Server Id', value=f'{game.game.player_turn.id}')
+      turn_embed.add_field(name='Server Name', value=f'{game.game.player_turn.name}')
+      await game.current_channel.send(embed=turn_embed)
+      await game.target_channel.send(embed=turn_embed)
+    elif game.game_choice != GameTypes.hm.value:
       turn_embed.add_field(name='Server Id', value=f'{game.game.turn.id}')
       turn_embed.add_field(name='Server Name', value=f'{game.game.turn.name}')
       await game.current_channel.send(embed=turn_embed)
@@ -286,6 +291,9 @@ class Bot(commands.Bot):
       await game.target_channel.send(file=discord.File(f'hangman{game.game.guesses}.png'))
       await game.current_channel.send(embed=game.draw())
       await game.target_channel.send(embed=game.draw())
+    elif game.game_choice == GameTypes.chess.value:
+      await game.current_channel.send(file=game.draw())
+      await game.target_channel.send(file=game.draw())
     else:
       await game.current_channel.send(game.draw())
       await game.target_channel.send(game.draw())

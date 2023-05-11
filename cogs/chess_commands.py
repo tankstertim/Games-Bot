@@ -11,21 +11,29 @@ class ChessCommands(commands.Cog):
   @commands.command(name='move')
   async def move_chess(self,ctx,move_str:str):
     key = await self.client.get_server_key(ctx.guild)
+    print('here')
     with open('server_info.json', 'r') as f:
       servers = json.load(f)
     game_channel = None
     if str(ctx.guild.id) in servers:
       game_channel = servers[str(ctx.guild.id)]['game_channel']
-
+    print('not moving.')
+    print(f'key: {key}')
+    print(f'channel: {game_channel}, {ctx.channel}')
     if key != None and str(ctx.channel.id) == game_channel:
+      print('inside')
       game = self.client.server_games[key]
       if game.turn != ctx.guild and game.game_choice != GameTypes.hm.value:
+        print(game.turn.name, ctx.guild.name)
+        print('exiting if not turn')
         return
       if game.turn == game.guild1:
         turn_channel = game.current_channel
       else:
         turn_channel = game.target_channel
+      print('channel')
       if ctx.channel != turn_channel and game.game_choice != GameTypes.hm.value:
+        print('exiting if current channel not equal to turn channel')
         return
       if game.mode == 2:
         move = game.game.move(move_str)

@@ -45,6 +45,8 @@ class Chess:
         curr_piece = self.board.get_piece(curr_row,curr_col)
         if curr_piece ==0:
           return False
+        if curr_piece.color != self.turn:
+          return False
         target_piece = self.board.get_piece(target_row,target_col)
         valid_moves = self.board.get_valid_moves(curr_piece,False)
         print(curr_row,curr_col)

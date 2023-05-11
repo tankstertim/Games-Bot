@@ -100,8 +100,8 @@ class VoteInviteButtons(discord.ui.View):
         await self.game.target_channel.send(embed = turn_embed)
         await self.game.current_channel.send(embed =  turn_embed)
         if  self.game.game_choice == GameTypes.chess.value:
-          await self.game.current_channel.send(file=board)
-          await self.game.target_channel.send(file=board)
+          await self.game.current_channel.send(file=self.game.draw())
+          await self.game.target_channel.send(file=self.game.draw())
         else:
           await self.game.current_channel.send(board)
           await self.game.target_channel.send(board)

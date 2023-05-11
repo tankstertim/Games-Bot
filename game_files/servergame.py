@@ -31,7 +31,9 @@ class ServerGame():
       self.game =Chess(self.guild1,self.guild2)
       self.game_choice = GameTypes.chess.value
   def draw(self):
-    if self.game_choice != GameTypes.hm.value:
+    if self.game_choice == GameTypes.chess.value:
+      self.turn = self.game.player_turn
+    elif self.game_choice != GameTypes.hm.value:
       self.turn = self.game.turn
     board_message = self.game.draw()
     self.winner= self.game.winner
