@@ -87,4 +87,7 @@ class Chess:
                 self.player_check = self.board.check
         self.board.get_all_valid_moves(self.turn)
         if self.board.checkmate:
-            self.winner = self.board.checkmate
+            if self.turn == 0:
+                self.winner = self.p2
+            else:
+                self.winner = self.p1
