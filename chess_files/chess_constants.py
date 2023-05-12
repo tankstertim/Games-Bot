@@ -8,6 +8,7 @@ HEIGHT, WIDTH = 800,800
 SQUARE_SIZE = WIDTH//COLS
 chess_dir = os.getcwd()
 print(chess_dir)
+BOARD_FONT = os.path.join(chess_dir,"chess_assets/Roboto-Bold.ttf")
 BLACK_PAWN_IMAGE = os.path.join(chess_dir,"chess_assets/black_pawn.png")
 BLACK_BISHOP_IMAGE = os.path.join(chess_dir,"chess_assets/black_bishop.png")
 BLACK_KNIGHT_IMAGE = os.path.join(chess_dir,"chess_assets/black_knight.png")

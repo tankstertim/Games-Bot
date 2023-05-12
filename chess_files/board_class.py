@@ -2,7 +2,7 @@ import discord
 from .chess_constants import *
 from .pieces import *
 from other_files.enums import *
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 from io import BytesIO
 class Board:
     def __init__(self):
@@ -37,14 +37,14 @@ class Board:
     
     def draw(self):
         chess_board = Image.new("RGBA",(WIDTH,HEIGHT), DARK_SQUARE)
+        font = ImageFont.truetype(BOARD_FONT,25)
         draw_board = ImageDraw.Draw(chess_board)
-
+        
         #draws the board
         for row in range(ROWS):
             for col in range(row%2,ROWS,2):
                 square_coords =  (row*SQUARE_SIZE,col*SQUARE_SIZE,(row+1)*SQUARE_SIZE,(col+1)*SQUARE_SIZE)
                 draw_board.rectangle(square_coords, fill = LIGHT_SQUARE)
-
         #draws the pieces
         for i in range(len(self.board)):
             for piece in self.board[i]:
@@ -54,6 +54,17 @@ class Board:
                 piece_image = Image.open(piece.image)
                 piece_resize = piece_image.resize((SQUARE_SIZE,SQUARE_SIZE))
                 chess_board.paste(piece_resize,piece_pos,piece_resize.convert('RGBA'))
+          
+        for row in range(ROWS):
+          if row%2 == 0:
+            draw_board.text((5,row*SQUARE_SIZE),str(8-row),DARK_SQUARE,font=font)
+          else:
+            draw_board.text((5,row*SQUARE_SIZE),str(8-row),LIGHT_SQUARE,font=font)
+        for col in range(COLS):
+          if col%2 == 1:
+            draw_board.text((col*SQUARE_SIZE+80,HEIGHT-30),str(chr(65+col)),DARK_SQUARE,font=font)
+          else:
+            draw_board.text((col*SQUARE_SIZE+80,HEIGHT-30),str(chr(65+col)),LIGHT_SQUARE,font=font)
         
         bytes_image = BytesIO()
         chess_board.save(bytes_image,format="PNG")
