@@ -38,6 +38,9 @@ class InviteButtons(discord.ui.View):
       elif self.game.game_type == 3:
           users[str(self.creator.id)]['connect4']['games'] += 1
           users[str(self.player.id)]['connect4']['games'] += 1
+      elif self.game.game_type == 4:
+          users[str(self.creator.id)]['chess']['games'] += 1
+          users[str(self.player.id)]['chess']['games'] += 1
       with open("scores.json" , "w") as f:
         json.dump(users,f,indent = 2)
       self.disable_view()
