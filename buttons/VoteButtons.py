@@ -100,8 +100,16 @@ class VoteInviteButtons(discord.ui.View):
         await self.game.target_channel.send(embed = turn_embed)
         await self.game.current_channel.send(embed =  turn_embed)
         if  self.game.game_choice == GameTypes.chess.value:
-          await self.game.current_channel.send(file=self.game.draw())
-          await self.game.target_channel.send(file=self.game.draw())
+          file= self.game.draw()
+          p1_score = await self.client.get_score(self.game.p1)
+          p2_score = await self.client.get_score(self.game.p2)
+          message_embed = discord.Embed(title="Chess")
+          message_embed.add_field(name=f'{self.game.p1.name}',value=f"elo: {p1_score['chess']['elo']}\ncolor: white")
+          message_embed.add_field(name=f'{self.game.p2.name}',value=f"elo: {p2_score['chess']['elo']}\ncolor: black")
+          message_embed.add_field(name='turn',value=f"{self.game.game.player_turn}", inline = False)
+          message_embed.set_image(url="attachment://chess_board.png")
+          await self.game.current_channel.send(file=file,embed=message_embed)
+          await self.game.target_channel.send(file=file,embed=message_embed)
         else:
           await self.game.current_channel.send(board)
           await self.game.target_channel.send(board)

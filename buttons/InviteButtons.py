@@ -49,12 +49,21 @@ class InviteButtons(discord.ui.View):
       if self.game.game_choice == GameTypes.hm.value:
         await interaction.channel.send(f'{self.creator.mention}, please use !word in private dms')
         await self.creator.send(f'{self.creator.mention}, please use !word (your word) here')
-      draw_message = self.game.draw()
+
       self.value = False
       self.used = True
       if self.game.game_type == 4:
-        await interaction.channel.send(file=draw_message)
+        board= self.game.draw()
+        p1_score = await self.client.get_score(self.game.p1)
+        p2_score = await self.client.get_score(self.game.p2)
+        message = discord.Embed(title="Chess")
+        message.add_field(name=f'{self.game.p1.name}',value=f"elo: {p1_score['chess']['elo']}\ncolor: white")
+        message.add_field(name=f'{self.game.p2.name}',value=f"elo: {p2_score['chess']['elo']}\ncolor: black")
+        message.add_field(name='turn',value=f"{self.game.game.player_turn}", inline = False)
+        message.set_image(url="attachment://chess_board.png")
+        await interaction.channel.send(file=board,embed=message)
         return
+      draw_message = self.game.draw()
       if draw_message != None:
         board_message = await interaction.channel.send(draw_message)
         self.game.message = board_message

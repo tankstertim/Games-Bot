@@ -70,7 +70,6 @@ class Board:
         chess_board.save(bytes_image,format="PNG")
         bytes_image.seek(0)
         chess_board_file = discord.File(bytes_image,filename="chess_board.png")
-       
         return chess_board_file
 
 

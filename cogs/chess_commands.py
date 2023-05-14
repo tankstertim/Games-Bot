@@ -76,8 +76,16 @@ class ChessCommands(commands.Cog):
     if not move:
       await ctx.reply('Not a valild move.',ephemeral = True)
       return
-
-    await ctx.send(file=game.draw())
+    
+    board= game.draw()
+    p1_score = await self.client.get_score(game.p1)
+    p2_score = await self.client.get_score(game.p2)
+    message = discord.Embed(title="Chess")
+    message.add_field(name=f'{game.p1.name}',value=f"elo: {p1_score['chess']['elo']}\ncolor: white")
+    message.add_field(name=f'{game.p2.name}',value=f"elo: {p2_score['chess']['elo']}\ncolor: black")
+    message.add_field(name='turn',value=f"{game.game.player_turn}", inline = False)
+    message.set_image(url="attachment://chess_board.png")
+    await ctx.send(file=board,embed=message)
     winner_embed= await self.client.check_game_over(game,'scores.json')
     if winner_embed != None:
       await ctx.send(embed = winner_embed)

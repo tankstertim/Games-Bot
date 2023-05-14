@@ -27,7 +27,7 @@ class Game:
       self.game = Connect4(p1,p2)
       self.game_choice = GameTypes.c4.value
     if game_type == 4:
-      self.game = Chess(p1,p2)
+      self.game = Chess(p1,p2,channel)
       self.game_choice = GameTypes.chess.value
     self.invite_accepted = False
     

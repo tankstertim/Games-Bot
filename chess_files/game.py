@@ -3,30 +3,32 @@ from .board_class import *
 import discord
 
 class Chess:
-    def __init__(self,p1,p2):
-        self._init(p1,p2)
+    def __init__(self,p1,p2,channel):
+        self._init(p1,p2,channel)
     
     def draw(self):
-        board_message = self.board.draw()
-        return board_message
+        board = self.board.draw()
+        return board
     def update(self):
         self.movesible_moves = 0
         self.player_check = False
         self.computer_check = False
         #self.board.check_if_promotion(self.turn)
-    def _init(self,p1,p2):
+    def _init(self,p1,p2,channel):
         self.col_dict = {"A": 0, "B": 1, "C": 2, "D": 3, "E": 4, "F": 5, "G": 6, "H":7}
         self.selected = None 
         self.board = Board()
         self.turn = 0
+        self.channel = channel
         self.player_turn = p1
         self.p1 = p1
         self.p2 = p2
+        self.message= None
         self.winner = None
         self.valid_moves = []
         self.attacked_squares= []
         self.board.get_all_valid_moves(0)
-        self.start_embed = discord.Embed(title="Test")
+        self.start_embed = discord.Embed(title="Game Started")
     
     def reset(self):
         self._init()
