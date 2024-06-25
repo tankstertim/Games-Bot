@@ -14,6 +14,7 @@ class Board:
         self.player_check = False
         self.promotion_piece = None
         self.promotion_pawn = None
+        self.curr_move = []
         self.kings = []
         self.player_checkmate = False
         self.computer_checkmate = False
@@ -45,6 +46,12 @@ class Board:
             for col in range(row%2,ROWS,2):
                 square_coords =  (row*SQUARE_SIZE,col*SQUARE_SIZE,(row+1)*SQUARE_SIZE,(col+1)*SQUARE_SIZE)
                 draw_board.rectangle(square_coords, fill = LIGHT_SQUARE)
+
+        for pos in self.curr_move:
+            row,col = map(int,pos)
+            square_coords = (col * SQUARE_SIZE, row * SQUARE_SIZE,
+                            (col + 1) * SQUARE_SIZE, (row + 1) * SQUARE_SIZE)
+            draw_board.rectangle(square_coords, fill=(252, 248, 3))
         #draws the pieces
         for i in range(len(self.board)):
             for piece in self.board[i]:
@@ -76,49 +83,59 @@ class Board:
     
     def move_piece(self, piece, row, col):
 
+        self.curr_move = []
         if piece != 0:
-            piece.prev_move = (piece.row,piece.col)
+            piece.prev_move = (piece.row, piece.col)
             if piece.type == PieceTypes.Pawn:
                 for t_piece in piece.take_piece:
-                    if (row,col) != piece.take_pos[t_piece.col]:
+                    if (row, col) != piece.take_pos[t_piece.col]:
                         continue
-                    self.take_attacking_piece(piece,[t_piece.row,t_piece.col])
+                    self.take_attacking_piece(piece, [t_piece.row, t_piece.col])
                     self.board[t_piece.row][t_piece.col] = 0
                     piece.take_piece = []
                     piece.take_pos = {}
                     break
-                
-            if piece.type == PieceTypes.King:
-                if (row,col) in piece.castle_pos:
-                    move_side = self._get_side(col,0)
-                    for pos in piece.rook_pos:
-                        castle_rook = self.get_piece(pos[0],pos[1])
-                        if self._get_side(pos[1],0) != move_side:
-                            continue
-                        if castle_rook == 0:
-                            continue
-                        if castle_rook.moves != 0:
-                            continue
-                        
-                        castle_rook_side = self._get_side(castle_rook.col,castle_rook)
-                        self.board[castle_rook.row][castle_rook.col+(2*castle_rook_side)],self.board[castle_rook.row][castle_rook.col] = castle_rook,0
-                        piece.move(castle_rook,castle_rook.row,castle_rook.col+(2*castle_rook_side))
-                        piece.castle = False
-                        piece.castled_rook = castle_rook
-                        piece.castled_pos = pos
-                        piece.castled = True
-                        piece.rook_pos = []
-            self.take_attacking_piece(piece,(row,col))
-            self.board[piece.row][piece.col], self.board[row][col] =  0,  self.board[piece.row][piece.col]
-            piece.move(piece,row,col)
-            if piece.type == PieceTypes.Pawn:
-                piece.check_in_passing(self.board)
-                piece.stayed_moves = 0
-                if piece.can_in_pass and (not piece in self.pawns_pass):
-                    self.pawns_pass.append(piece)
-            
-        return 
-    
+
+        if piece.type == PieceTypes.King:
+            if (row, col) in piece.castle_pos:
+                move_side = self._get_side(col, 0)
+                for pos in piece.rook_pos:
+                    castle_rook = self.get_piece(pos[0], pos[1])
+                    if self._get_side(pos[1], 0) != move_side:
+                        continue
+                    if castle_rook == 0:
+                        continue
+                    if castle_rook.moves != 0:
+                        continue
+
+                    castle_rook_side = self._get_side(castle_rook.col, castle_rook)
+                    self.board[castle_rook.row][
+                    castle_rook.col + (2 * castle_rook_side)], self.board[
+                        castle_rook.row][castle_rook.col] = castle_rook, 0
+                    piece.move(castle_rook, castle_rook.row,
+                            castle_rook.col + (2 * castle_rook_side))
+        
+                    piece.castle = False
+                    piece.castled_rook = castle_rook
+                    piece.castled_pos = pos
+                    piece.castled = True
+                    piece.rook_pos = []
+        self.take_attacking_piece(piece, (row, col))
+        self.board[piece.row][piece.col], self.board[row][col] = 0, self.board[
+            piece.row][piece.col]
+
+        self.curr_move.append((piece.row,piece.col))
+        self.curr_move.append((row,col))
+
+        piece.move(piece, row, col)
+        if piece.type == PieceTypes.Pawn:
+            piece.check_in_passing(self.board)
+            piece.stayed_moves = 0
+            if piece.can_in_pass and (not piece in self.pawns_pass):
+                self.pawns_pass.append(piece)
+
+        return
+        
     def create_board_pieces(self):
         for i in range(len(self.board)):
             if i+1 == 1 or i+1 == 2:

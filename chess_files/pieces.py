@@ -14,8 +14,7 @@ class Piece:
     def get_position(self):
         return [self.row,self.col]
     
-    def get_valid_moves(self, piece):
-        pass
+
     def move(self,piece, new_row, new_col):
         piece.moves += 1
         if piece.type == PieceTypes.Pawn:

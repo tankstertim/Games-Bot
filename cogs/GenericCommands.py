@@ -96,8 +96,12 @@ class GenericCommands(commands.Cog):
           users[str(game.p1.id)]['tictactoe']['games'] += 1
           users[str(game.p2.id)]['tictactoe']['games'] += 1
       else:
-        await interaction.response.send_message(f'The bot cannot play {choice.name}.')
-        return
+        if str(user.id) == "705197693407854692" and game_type == 4:
+          users[str(game.p1.id)]['chess']['games'] += 1
+          users[str(game.p2.id)]['chess']['games'] += 1
+        else:
+          await interaction.response.send_message(f'The bot cannot play {choice.name}.')
+          return
       with open("scores.json" , "w") as f:
         json.dump(users,f,indent = 2)
       game = self.client.games[(user, player, guild_id)]
@@ -181,9 +185,14 @@ class GenericCommands(commands.Cog):
         draws: {score[k.value]['draws']}
         games played: {score[k.value]['games']}\n
         """, inline = True)
-   
     
     await interaction.response.send_message(embed=stats_embed)
+
+  @app_commands.command(name = 'save')
+  async def save_game(self,interaction):
+    key = self.client.get_key()
+    if key == None:
+      await interaction.response.send_message('You are not in a game.')
     
 
 

@@ -28,7 +28,9 @@ class Chess:
         self.valid_moves = []
         self.attacked_squares= []
         self.board.get_all_valid_moves(0)
-        self.start_embed = discord.Embed(title="Game Started")
+        self.start_embed = discord.Embed(title = 'Chess Commands')
+        self.start_embed.add_field(name = '!move', value = 'Type in !place (piece position)(target position) to mark. ')
+        self.start_embed.add_field(name = '/quit', value = 'Type in /quit to leave the game.', inline = False)
     
     def reset(self):
         self._init()

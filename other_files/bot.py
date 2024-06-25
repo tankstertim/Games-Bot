@@ -19,6 +19,7 @@ class Bot(commands.Bot):
     self.cogslist = ["cogs.tictactoe_commands","cogs.GenericCommands","cogs.HangManCommand", "cogs.connect4_commands","cogs.MultiServerCommands","cogs.chess_commands"]
     self.games = {}
     self.server_games = {}
+    self.saved_games= {}
 
   async def on_ready(self):
     await self.tree.sync()
@@ -297,6 +298,7 @@ class Bot(commands.Bot):
     else:
       await game.current_channel.send(game.draw())
       await game.target_channel.send(game.draw())
+    game.winner = game.game.winner
     winner_embed,lose_embed= await self.check_game_over(game,'server_info.json')
     if winner_embed != None:
       if game.winner == game.guild1:

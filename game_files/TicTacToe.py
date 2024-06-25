@@ -17,9 +17,11 @@ class TicTacToe:
     self.start_embed.add_field(name = '/quit', value = 'Type in /quit to leave the game.', inline = False)
   
   def check_win(self):
+    print("Board:", self.board)
     for i in range(len(self.board)):
       if self.board[i][0] == self.board[i][1] == self.board[i][2] and self.board[i][0] != EMPTY_SQUARE:
-        return self.board[i][0]
+        self.winner =self.turn
+        return True
       if self.board[0][i] == self.board[1][i] == self.board[2][i] and self.board[0][i] != EMPTY_SQUARE:
         self.winner = self.turn
         return True
@@ -56,6 +58,10 @@ class TicTacToe:
   
   def change_turn(self):
     self.check_win()
+    print(self.board)
+    print("winner2: ", self.winner)
+    print("turn:", self.turn)
+
     if self.winner == None and self.computer:
       self.turn = self.p2
       move = computer_move(self.board, O, X, 9)

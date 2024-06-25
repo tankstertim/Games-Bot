@@ -17,6 +17,7 @@ class Game:
     self.message = None
     self.user_error_message = None
     self.game_type = game_type
+    self.saved = False
     if game_type == 1:
       self.game = TicTacToe(p1,p2,computer,channel)
       self.game_choice = GameTypes.ttt.value

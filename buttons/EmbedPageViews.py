@@ -19,6 +19,8 @@ class ServerListView(discord.ui.View):
       description=
       f"page {self.current_page} of {int(len(self.guilds) / self.sep) + 1}")
     for item in data:
+      if not item:
+        continue
       embed.add_field(name=item.name, value=item.id, inline=False)
     return embed
 

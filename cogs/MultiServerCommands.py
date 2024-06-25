@@ -127,9 +127,11 @@ class MultiServerCommands(commands.Cog):
       await dropdown_view.send()
       return
     elif leaderboard_type.value == 2:
-      users = [
-        self.client.get_guild(int(guild)) for guild in users_dict.keys()
-      ]
+      users = []
+      for guild in users_dict.keys():
+        curr_guild = self.client.get_guild(int(guild))
+        if curr_guild:
+          users.append(curr_guild)
     for i in range(len(users)):
       for j in range(len(users)):
         user1 = users_dict[str(users[i].id)][game_type.value]
@@ -173,6 +175,8 @@ class MultiServerCommands(commands.Cog):
     lst_guilds = []
     lst_ids = []
     for guild in guilds:
+      if not guild:
+        continue
       if servers[str(guild.id)]['game_channel'] == None:
         continue
       guild_name = guild.name.lower().split()
@@ -327,6 +331,8 @@ class MultiServerCommands(commands.Cog):
     if search != None:
       search_guilds = []
       for guild in guilds:
+        if not guild:
+          continue
         if search in guild.name.lower():
           search_guilds.append(guild)
       list_view = ServerListView(search_guilds)
