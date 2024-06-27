@@ -171,6 +171,7 @@ class MultiServerCommands(commands.Cog):
     top_role = user.top_role
     if not str(top_role.id) in servers[str(interaction.guild.id)]['whitelisted_roles'] and not user.guild_permissions.administrator:
       await interaction.followup.send('You are not an administrator of this server', ephemeral = True)
+      return
     guilds = [self.client.get_guild(int(guild)) for guild in servers.keys()]
     lst_guilds = []
     lst_ids = []
